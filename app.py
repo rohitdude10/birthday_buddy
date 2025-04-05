@@ -25,12 +25,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # MySQL Database Configuration
-db_uri = os.environ.get('DATABASE_URI')
-if '${PASSWORD}' in db_uri:
-    # Replace the placeholder with the actual password
-    password = os.environ.get('PASSWORD')
-    db_uri = db_uri.replace('${PASSWORD}', password)
-
+# Construct the SQLAlchemy URI directly with the actual values
+db_uri = os.environ.get('DATABASE_SERVICE_URI')
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -460,4 +456,4 @@ if __name__ == '__main__':
         app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
     else:
         # Development settings
-        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 7000)), debug=False)
+        app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)

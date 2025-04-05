@@ -10,25 +10,21 @@ def test_connection():
     """Test the MySQL connection and database configuration"""
     print("Testing MySQL connection...")
     
-    # Get environment variables
-    db_name = os.environ.get('DB_NAME')
-    host_uri = os.environ.get('DATABASE_URI').split('@')[1].split('/')[0]
-    password = os.environ.get('PASSWORD')
-    username = os.environ.get('USERNAME')
+    timeout = 10
     
     # Try direct connection
     try:
         connection = pymysql.connect(
             charset="utf8mb4",
-            connect_timeout=10,
+            connect_timeout=timeout,
             cursorclass=pymysql.cursors.DictCursor,
-            db=db_name,
-            host=host_uri.split(':')[0],
-            password=password,
-            read_timeout=10,
-            port=int(host_uri.split(':')[1]),
-            user=username,
-            write_timeout=10,
+            db="birthday_buddy",
+            host=os.environ.get('DATABASE_URI'),
+            password=os.environ.get('PASSWORD'),
+            read_timeout=timeout,
+            port=26323,
+            user="avnadmin",
+            write_timeout=timeout,
         )
         
         cursor = connection.cursor()

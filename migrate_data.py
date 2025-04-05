@@ -13,9 +13,10 @@ print("Starting data migration for MySQL database...")
 
 # Get environment variables
 db_name = os.environ.get('DB_NAME')
-host_uri = os.environ.get('DATABASE_URI').split('@')[1].split('/')[0]
+host_uri = os.environ.get('DATABASE_URI')
 password = os.environ.get('PASSWORD')
 username = os.environ.get('USERNAME')
+db_port = os.environ.get('DB_PORT', "26323")
 
 # Setup MySQL connection
 connection = pymysql.connect(
@@ -23,10 +24,10 @@ connection = pymysql.connect(
     connect_timeout=10,
     cursorclass=pymysql.cursors.DictCursor,
     db=db_name,
-    host=host_uri.split(':')[0],
+    host=host_uri,
     password=password,
     read_timeout=10,
-    port=int(host_uri.split(':')[1]),
+    port=db_port,
     user=username,
     write_timeout=10,
 )
