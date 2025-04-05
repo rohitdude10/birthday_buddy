@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="fw-bold mb-1">Your Birthday Calendar</h1>
+        <p class="text-muted">Never miss a special day again</p>
+    </div>
+    <div>
+        <a href="{{ url_for('add_birthday') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-2"></i>Add New Birthday
+        </a>
+    </div>
+</div>
+
+{% if upcoming %}
+<div class="card border-0 shadow-sm mb-5">
+    <div class="card-header bg-primary bg-gradient text-white py-3">
+        <h4 class="mb-0 fw-bold">
+            <i class="bi bi-calendar-event me-2"></i>Upcoming Birthdays
+            <span class="badge bg-white text-primary ms-2">Next 30 Days</span>
+        </h4>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-4 py-3">Name</th>
+                        <th class="py-3">Date</th>
+                        <th class="py-3">Countdown</th>
+                        <th class="py-3">Age</th>
+                        <th class="py-3">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bday in upcoming %}
+                        <tr {% if bday.days_until <= 7 %}class="table-warning"{% endif %}>
+                            <td class="px-4 py-3 fw-medium">{{ bday.name }}</td>
+                            <td>{{ bday.this_year_date.strftime('%b %d, %Y') }}</td>
+                            <td>
+                                {% if bday.days_until == 0 %}
+                                    <span class="badge bg-danger py-2 px-3">Today! 🎂</span>
+                                {% elif bday.days_until == 1 %}
+                                    <span class="badge bg-warning text-dark py-2 px-3">Tomorrow!</span>
+                                {% elif bday.days_until <= 7 %}
+                                    <span class="badge bg-warning text-dark py-2 px-3">{{ bday.days_until }} days</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark py-2 px-3">{{ bday.days_until }} days</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ bday.age }}</td>
+                            <td class="text-truncate" style="max-width: 150px;">{{ bday.notes }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">All Birthdays</h3>
+    {% if birthdays %}
+    <div class="btn-group">
+        <button type="button" class="btn btn-outline-primary active" id="gridView">
+            <i class="bi bi-grid"></i>
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="listView">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row g-4" id="birthdaysGrid">
+    {% if birthdays %}
+        {% for birthday in birthdays %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body position-relative">
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <a href="{{ url_for('delete_birthday', id=birthday.id) }}" 
+                               class="text-danger"
+                               onclick="return confirm('Are you sure you want to delete this birthday?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="bi bi-gift text-primary"></i>
+                            </div>
+                            <div>
+                                <h5 class="card-title fw-bold mb-1">{{ birthday.name }}</h5>
+                                <h6 class="card-subtitle text-muted">
+                                    <i class="bi bi-calendar3 me-1"></i>{{ birthday.date.strftime('%B %d, %Y') }}
+                                </h6>
+                            </div>
+                        </div>
+                        {% if birthday.notes %}
+                            <p class="card-text mb-0">
+                                <i class="bi bi-sticky me-2 text-muted"></i>{{ birthday.notes }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-light py-2 px-3">
+                        <small class="text-muted">Added: {{ birthday.created_at.strftime('%Y-%m-%d') }}</small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="col">
+            <div class="alert alert-info py-4 shadow-sm">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1">No birthdays yet</h5>
+                        <p class="mb-0">Click the "Add New Birthday" button to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="d-none" id="birthdaysList">
+    {% if birthdays %}
+        <div class="card border-0 shadow-sm">
+            <div class="list-group list-group-flush">
+                {% for birthday in birthdays %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <h5 class="mb-1">{{ birthday.name }}</h5>
+                            <p class="mb-0 text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>{{ birthday.date.strftime('%B %d, %Y') }}
+                                {% if birthday.notes %}
+                                <span class="ms-3"><i class="bi bi-sticky me-1"></i>{{ birthday.notes }}</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <a href="{{ url_for('delete_birthday', id=birthday.id) }}" 
+                           class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this birthday?')">
+                            <i class="bi bi-trash me-1"></i>Delete
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const birthdaysGrid = document.getElementById('birthdaysGrid');
+        const birthdaysList = document.getElementById('birthdaysList');
+        
+        if (gridView && listView) {
+            gridView.addEventListener('click', function() {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                birthdaysGrid.classList.remove('d-none');
+                birthdaysList.classList.add('d-none');
+            });
+            
+            listView.addEventListener('click', function() {
+                listView.classList.add('active');
+                gridView.classList.remove('active');
+                birthdaysList.classList.remove('d-none');
+                birthdaysGrid.classList.add('d-none');
+            });
+        }
+    });
+</script>
+{% endblock %} 

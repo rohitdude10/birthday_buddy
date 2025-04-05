@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-white py-3">
+                <h2 class="card-title mb-0 fw-bold">
+                    <i class="bi bi-gift text-primary me-2"></i>Add New Birthday
+                </h2>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <div class="mb-4">
+                        <label for="name" class="form-label fw-medium">Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter name" required autofocus>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="date" class="form-label fw-medium">Birthday Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-calendar-date"></i>
+                            </span>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="notes" class="form-label fw-medium">Notes (Optional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="bi bi-sticky"></i>
+                            </span>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Add any additional notes or gift ideas"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary py-2">
+                            <i class="bi bi-plus-circle me-2"></i>Add Birthday
+                        </button>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary py-2">
+                            <i class="bi bi-arrow-left me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
